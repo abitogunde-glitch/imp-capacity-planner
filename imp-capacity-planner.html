@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Implementation Team · Capacity Planner 2026</title>
-  <!-- React + Babel loaded from CDN — no install needed -->
+  <title>Implementation Team - Capacity Planner 2026</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -12,65 +11,30 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', 'Segoe UI', sans-serif; background: #f1f5f9; color: #0f172a; min-height: 100vh; }
 
-    body {
-      font-family: 'DM Sans', 'Segoe UI', sans-serif;
-      background: #f1f5f9;
-      color: #0f172a;
-      min-height: 100vh;
-    }
-
-    /* ── Header ── */
-    .header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: #fff;
-      padding: 28px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 3px solid #3b82f6;
-    }
-    .header-eyebrow {
-      font-size: 11px; font-weight: 700; letter-spacing: .15em;
-      text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;
-    }
+    /* Header */
+    .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #3b82f6; }
+    .header-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; }
     .header-title { font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
-    .export-btn {
-      padding: 9px 18px; background: #3b82f6; color: #fff; border: none;
-      border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
-      font-family: inherit; letter-spacing: -.01em; transition: background .15s;
-      white-space: nowrap;
-    }
+    .export-btn { padding: 9px 18px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s; white-space: nowrap; }
     .export-btn:hover { background: #2563eb; }
 
-
-    /* ── Main layout ── */
+    /* Layout */
     .main { max-width: 1400px; margin: 0 auto; padding: 32px 24px; display: flex; flex-direction: column; gap: 28px; }
-
-    .section-title    { font-size: 17px; font-weight: 700; margin-bottom: 6px; letter-spacing: -.01em; }
+    .section-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; letter-spacing: -.01em; }
     .section-subtitle { font-size: 13px; color: #64748b; margin-bottom: 14px; line-height: 1.6; }
 
-
-
-
-
-
-
-    /* ── Status banner ── */
+    /* Status banner */
     .status-banner { padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; }
     .status-banner.loading { background: #f1f5f9; color: #64748b; }
     .status-banner.loaded  { background: #dcfce7; color: #15803d; }
     .status-banner.error   { background: #fee2e2; color: #dc2626; }
 
-    /* ── Summary cards ── */
+    /* Summary cards */
     .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     @media (max-width: 900px) { .summary-grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 500px) { .summary-grid { grid-template-columns: 1fr; } }
-
-    .summary-card {
-      background: #fff; border-radius: 12px; padding: 20px 22px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
-    }
+    .summary-card { background: #fff; border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04); }
     .summary-quarter  { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; }
     .summary-hours    { font-size: 36px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-bottom: 4px; font-family: 'DM Mono', monospace; }
     .summary-unit     { font-size: 14px; font-weight: 400; color: #94a3b8; }
@@ -80,25 +44,14 @@
     .status-badge     { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; }
     .summary-footnote { font-size: 11px; color: #cbd5e1; }
 
-
-
-    /* ── How This Works ── */
-    .how-wrapper {
-      background: #fff; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
-    }
-    .how-toggle {
-      display: flex; align-items: center; justify-content: space-between;
-      width: 100%; padding: 14px 24px; background: none; border: none;
-      font-size: 14px; font-weight: 600; color: #334155; cursor: pointer;
-      font-family: inherit; letter-spacing: -.01em;
-    }
+    /* How This Works */
+    .how-wrapper { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04); }
+    .how-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 14px 24px; background: none; border: none; font-size: 14px; font-weight: 600; color: #334155; cursor: pointer; font-family: inherit; }
     .how-toggle:hover { background: #f8fafc; }
     .how-chevron { font-size: 11px; color: #94a3b8; }
     .how-body { padding: 24px; border-top: 1px solid #f1f5f9; }
     .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     @media (max-width: 900px) { .how-grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 500px) { .how-grid { grid-template-columns: 1fr; } }
     .how-block { background: #f8fafc; border-radius: 10px; padding: 16px; font-size: 13px; color: #334155; line-height: 1.6; }
     .how-block-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 10px; }
     .how-formula { background: #e2e8f0; border-radius: 6px; padding: 6px 10px; font-family: 'DM Mono', monospace; font-size: 12px; color: #1e293b; margin: 6px 0; }
@@ -113,88 +66,32 @@
     .how-list { padding-left: 16px; }
     .how-list li { margin-bottom: 6px; }
 
-    /* ── Main table ── */
+    /* Main table */
     .table-wrapper { overflow-x: auto; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04); }
     .main-table { width: 100%; border-collapse: collapse; background: #fff; font-size: 13px; min-width: 900px; }
-
-    .main-table thead th {
-      padding: 11px 14px; background: #f1f5f9; border-bottom: 2px solid #e2e8f0;
-      font-size: 11px; font-weight: 700; color: #475569; letter-spacing: .04em;
-      text-transform: uppercase; white-space: nowrap;
-    }
-    .main-table thead th.center { text-align: center; }
-    .main-table thead th.hrs-col { color: #94a3b8; }
-
+    .main-table thead th { padding: 11px 14px; background: #f1f5f9; border-bottom: 2px solid #e2e8f0; font-size: 11px; font-weight: 700; color: #475569; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; text-align: center; }
+    .main-table thead th.left { text-align: left; }
+    .main-table thead th.total-col { background: #e2e8f0; color: #334155; }
     .main-table tbody tr:nth-child(even) { background: #f8fafc; }
     .main-table tbody tr:hover { background: #eff6ff; }
-    .main-table td { padding: 9px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-    .main-table td.center { text-align: center; }
-    .main-table td.muted  { color: #64748b; font-size: 13px; }
-    .main-table td.label  { font-weight: 500; }
+    .main-table td { padding: 9px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; text-align: center; }
+    .main-table td.left { text-align: left; font-weight: 500; }
+    .main-table td.muted { color: #64748b; }
+    .main-table td.total-col { background: #f1f5f9; font-weight: 700; color: #1e293b; font-family: 'DM Mono', monospace; }
+    .main-table tfoot tr.baseline td { background: #f1f5f9; font-style: italic; color: #64748b; font-size: 12px; padding: 8px 14px; }
+    .main-table tfoot tr.totals td { background: #1e293b; color: #e2e8f0; padding: 11px 14px; font-weight: 700; font-family: 'DM Mono', monospace; }
+    .main-table tfoot tr.hire td { background: #0f172a; color: #64748b; padding: 9px 14px; font-size: 12px; }
 
-    .deal-input {
-      width: 60px; padding: 5px 8px; border: 1.5px solid #e2e8f0; border-radius: 6px;
-      font-size: 13px; text-align: center; outline: none; background: #fff;
-      font-family: 'DM Mono', monospace; transition: border-color .15s;
-    }
-    .deal-input:focus { border-color: #3b82f6; background: #eff6ff; }
-
-    .main-table tfoot tr.baseline td { background: #f1f5f9; font-style: italic; color: #64748b; font-size: 12px; }
-    .main-table tfoot tr.totals  td { background: #1e293b; color: #e2e8f0; padding: 11px 14px; font-weight: 700; }
-    .main-table tfoot tr.hire    td { background: #0f172a; color: #64748b; padding: 9px 14px; font-size: 12px; }
-
-    /* ── How it works panel ── */
-    .info-wrapper {
-      background: #fff; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
-    }
-    .info-toggle {
-      display: flex; align-items: center; justify-content: space-between;
-      width: 100%; padding: 14px 24px; text-align: left;
-      background: none; border: none; cursor: pointer;
-      font-size: 14px; font-weight: 600; color: #334155;
-      font-family: inherit; letter-spacing: -.01em;
-    }
-    .info-toggle:hover { background: #f8fafc; }
-    .info-toggle-arrow { font-size: 11px; color: #94a3b8; transition: transform .2s; }
-    .info-toggle-arrow.open { transform: rotate(180deg); }
-    .info-body { padding: 0 24px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-    @media (max-width: 700px) { .info-body { grid-template-columns: 1fr; } }
-    .info-section-title { font-size: 11px; font-weight: 700; color: #475569; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1.5px solid #f1f5f9; }
-    .info-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .info-table td { padding: 7px 0; border-bottom: 1px solid #f8fafc; color: #334155; }
-    .info-table td:last-child { text-align: right; font-family: 'DM Mono', monospace; font-weight: 600; color: #1e40af; }
-    .info-formula { background: #f8fafc; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #334155; line-height: 2; }
-    .info-formula strong { color: #0f172a; }
-    .info-note { margin-top: 12px; padding: 10px 14px; background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 0 6px 6px 0; font-size: 12px; color: #92400e; line-height: 1.6; }
-
-    /* ── Footer ── */
+    /* Footer */
     .page-footer { text-align: center; font-size: 12px; color: #cbd5e1; padding-top: 16px; border-top: 1px solid #e2e8f0; }
   </style>
 </head>
 <body>
   <div id="root"></div>
-
   <script type="text/babel">
     const { useState } = React;
 
-    // ─────────────────────────────────────────────
-    // CONSTANTS & DEFAULT DATA
-    // ─────────────────────────────────────────────
-
     const QUARTERS = ["Q1", "Q2", "Q3", "Q4"];
-
-    const DEFAULT_PROJECT_TYPES = [
-      { id: "b2b_direct",       label: "B2B Direct Client",                defaultHours: 55 },
-      { id: "health_plan",      label: "Health Plan / Partner",            defaultHours: 87 },
-      { id: "cvs_subclient",    label: "CVS Subclient",                    defaultHours: 35 },
-      { id: "aetna_subclient",  label: "Aetna Subclient",                  defaultHours: 40 },
-      { id: "other_subclient",  label: "All Other Subclients",             defaultHours: 40 },
-      { id: "offboarding",      label: "Client Offboarding Project",       defaultHours: 20 },
-      { id: "pangea_pilot",     label: "Pangea Pilot",                     defaultHours:  6 },
-      { id: "existing_support", label: "Existing Client Project Support",  defaultHours:  8 },
-      { id: "existing_upsell",  label: "Existing Client Upsell/Expansion", defaultHours: 20 },
-    ];
 
     const DEFAULT_ASSUMPTIONS = {
       baselineHours:     130,
@@ -202,27 +99,26 @@
       yellowThreshold:   0.85,
     };
 
-    const SAMPLE_DEAL_COUNTS = {
-      b2b_direct:       { Q1: 3, Q2: 4, Q3: 5, Q4: 4 },
-      health_plan:      { Q1: 1, Q2: 2, Q3: 1, Q4: 2 },
-      cvs_subclient:    { Q1: 2, Q2: 2, Q3: 3, Q4: 3 },
-      aetna_subclient:  { Q1: 1, Q2: 1, Q3: 2, Q4: 1 },
-      other_subclient:  { Q1: 2, Q2: 3, Q3: 2, Q4: 3 },
-      offboarding:      { Q1: 1, Q2: 1, Q3: 1, Q4: 1 },
-      pangea_pilot:     { Q1: 4, Q2: 5, Q3: 6, Q4: 5 },
-      existing_support: { Q1: 5, Q2: 5, Q3: 6, Q4: 6 },
-      existing_upsell:  { Q1: 2, Q2: 3, Q3: 2, Q4: 3 },
-    };
+    // Fallback project list shown while loading or on error
+    const FALLBACK_PROJECTS = [
+      { id: "p0", label: "B2B Direct Client",                hours: 55,  deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+      { id: "p1", label: "Health Plan / Partner",            hours: 87,  deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+      { id: "p2", label: "CVS Subclient",                    hours: 35,  deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+      { id: "p3", label: "Aetna Subclient",                  hours: 40,  deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+      { id: "p4", label: "All Other Subclients",             hours: 40,  deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+      { id: "p5", label: "Client Offboarding Project",       hours: 20,  deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+      { id: "p6", label: "Pangea Pilot",                     hours: 6,   deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+      { id: "p7", label: "Existing Client Project Support",  hours: 8,   deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+      { id: "p8", label: "Existing Client Upsell/Expansion", hours: 20,  deals: { Q1:0, Q2:0, Q3:0, Q4:0 } },
+    ];
 
-    // ─────────────────────────────────────────────
-    // PURE CALCULATIONS
-    // ─────────────────────────────────────────────
+    // ── Calculations ──────────────────────────────
 
-    function calcQuarterHours(quarter, dealCounts, hoursPerProject, baselineHours) {
-      const projectHours = Object.entries(dealCounts).reduce((sum, [id, quarters]) => {
-        return sum + (Number(quarters[quarter]) || 0) * (Number(hoursPerProject[id]) || 0);
+    // Total hours for one quarter across all projects + baseline
+    function calcQuarterHours(quarter, projects, baselineHours) {
+      return baselineHours + projects.reduce((sum, pt) => {
+        return sum + (Number(pt.deals[quarter]) || 0) * (Number(pt.hours) || 0);
       }, 0);
-      return baselineHours + projectHours;
     }
 
     function getStatus(pct, yellowThreshold) {
@@ -231,30 +127,63 @@
       return                             { label: "Looking Good",  color: "#22c55e", bg: "#dcfce7" };
     }
 
-    // ─────────────────────────────────────────────
-    // QUARTERLY SUMMARY CARDS
-    // ─────────────────────────────────────────────
+    // ── Google Sheets fetch ────────────────────────
+    // Reads project names (col A), hours (col B), and deal counts (cols D-G)
+    // from rows 3-11 of the "Current" tab.
+    // Col indices are 0-based: A=0, B=1, C=2, D=3, E=4, F=5, G=6
 
-    function QuarterlySummary({ dealCounts, hoursPerProject, assumptions }) {
+    const SHEET_ID  = "16XQnVVZNh1Vak5PaCaAjbI6H55yTuEdxvvYNl3sKFpQ";
+    const SHEET_TAB = "Current";
+    const DATA_START_ROW = 2; // 0-indexed, so row 3 in Sheets
+
+    async function fetchSheetData() {
+      const url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json&sheet=" + encodeURIComponent(SHEET_TAB);
+      const res  = await fetch(url);
+      const text = await res.text();
+      const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+      const rows = json.table.rows;
+
+      const projects = [];
+      for (let i = 0; i < 9; i++) {
+        const row = rows[DATA_START_ROW + i];
+        if (!row) continue;
+        const getNum = (col) => { try { return Number(row.c[col] && row.c[col].v) || 0; } catch(e) { return 0; } };
+        const getStr = (col) => { try { return (row.c[col] && row.c[col].v) ? String(row.c[col].v) : ""; } catch(e) { return ""; } };
+        projects.push({
+          id:    "p" + i,
+          label: getStr(0),   // Column A: project name
+          hours: getNum(1),   // Column B: hours per deal (pulled live from sheet)
+          deals: {
+            Q1: getNum(3),    // Column D
+            Q2: getNum(4),    // Column E
+            Q3: getNum(5),    // Column F
+            Q4: getNum(6),    // Column G
+          },
+        });
+      }
+      return projects.filter(p => p.label !== "");
+    }
+
+    // ── Summary Cards ──────────────────────────────
+
+    function QuarterlySummary({ projects, assumptions }) {
       return (
         <div className="summary-grid">
           {QUARTERS.map(q => {
-            const total    = calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours);
+            const total    = calcQuarterHours(q, projects, assumptions.baselineHours);
             const pct      = total / assumptions.capacityThreshold;
             const status   = getStatus(pct, assumptions.yellowThreshold);
             const needHire = total >= assumptions.capacityThreshold;
             return (
-              <div key={q} className="summary-card" style={{ borderTop: `4px solid ${status.color}` }}>
+              <div key={q} className="summary-card" style={{ borderTop: "4px solid " + status.color }}>
                 <div className="summary-quarter">{q} 2026</div>
-                <div className="summary-hours">
-                  {total.toLocaleString()} <span className="summary-unit">hrs</span>
-                </div>
+                <div className="summary-hours">{total.toLocaleString()} <span className="summary-unit">hrs</span></div>
                 <div className="summary-pct">{(pct * 100).toFixed(1)}% capacity</div>
                 <div className="progress-track">
-                  <div className="progress-fill" style={{ width: `${Math.min(pct * 100, 100)}%`, background: status.color }} />
+                  <div className="progress-fill" style={{ width: Math.min(pct * 100, 100) + "%", background: status.color }} />
                 </div>
                 <div className="status-badge" style={{ background: status.bg, color: status.color }}>
-                  {needHire ? "⚠ HIRE NEEDED" : status.label}
+                  {needHire ? "HIRE NEEDED" : status.label}
                 </div>
                 <div className="summary-footnote">Threshold: {assumptions.capacityThreshold.toLocaleString()} hrs</div>
               </div>
@@ -264,69 +193,60 @@
       );
     }
 
-    // ─────────────────────────────────────────────
-    // HOW THIS WORKS TOGGLE
-    // ─────────────────────────────────────────────
+    // ── How This Works ─────────────────────────────
 
-    function HowItWorks() {
+    function HowItWorks({ projects }) {
       const [open, setOpen] = useState(false);
       return (
         <div className="how-wrapper">
           <button className="how-toggle" onClick={() => setOpen(o => !o)}>
-            <span>Start Here — How to Use This Tool</span>
-            <span className="how-chevron">{open ? "▲" : "▼"}</span>
+            <span>Start Here -- How to Use This Tool</span>
+            <span className="how-chevron">{open ? "^" : "v"}</span>
           </button>
           {open && (
             <div className="how-body">
               <div className="how-grid">
-
                 <div className="how-block">
-                  <div className="how-block-title">📐 Core Formula</div>
+                  <div className="how-block-title">Core Formula</div>
                   <p>For each quarter:</p>
-                  <div className="how-formula">Total Hours = 130 (baseline) + Σ (Deals × Hours/Project)</div>
-                  <div className="how-formula">Capacity % = Total Hours ÷ 935</div>
-                  <p>If Total Hours ≥ 935 → <strong>Hire Needed</strong></p>
+                  <div className="how-formula">Total Hours = 130 (baseline) + sum(Deals x Hours/Project)</div>
+                  <div className="how-formula">Capacity % = Total Hours / 935</div>
+                  <p>If Total Hours is 935 or more: Hire Needed</p>
                 </div>
-
                 <div className="how-block">
-                  <div className="how-block-title">⚡ Capacity Thresholds</div>
-                  <div className="how-pill green">✓ Green — below 85% capacity</div>
-                  <div className="how-pill yellow">⚠ Yellow — 85–99% capacity, watch closely</div>
-                  <div className="how-pill red">✗ Red — 100%+ capacity, hire needed</div>
+                  <div className="how-block-title">Capacity Thresholds</div>
+                  <div className="how-pill green">Green -- below 85% capacity</div>
+                  <div className="how-pill yellow">Yellow -- 85-99% capacity, watch closely</div>
+                  <div className="how-pill red">Red -- 100%+ capacity, hire needed</div>
                 </div>
-
                 <div className="how-block">
-                  <div className="how-block-title">📋 Baseline Hours</div>
-                  <p>130 hours per quarter reflects <strong>5 hours/week per FTE</strong> of general implementation work — team admin, meetings, onboarding, and coordination not tied to a specific project.</p>
+                  <div className="how-block-title">Baseline Hours</div>
+                  <p>130 hours per quarter reflects <strong>5 hours/week per FTE</strong> of general implementation work -- admin, meetings, onboarding not tied to a specific project.</p>
                 </div>
-
                 <div className="how-block">
-                  <div className="how-block-title">🏢 Capacity Threshold (935 hrs)</div>
-                  <p>Maximum quarterly capacity is <strong>1,040 hours</strong> (2 team members × 520 hrs/person). The 935 hr trigger reflects a <strong>36-hour work week</strong> per person — the remaining 4 hrs/week per person is a flex buffer for unexpected delays.</p>
+                  <div className="how-block-title">Capacity Threshold (935 hrs)</div>
+                  <p>Max quarterly capacity is <strong>1,040 hours</strong> (2 team members x 520 hrs/person). The 935 hr trigger reflects a <strong>36-hour work week</strong> -- remaining 4 hrs/week per person is a flex buffer.</p>
                 </div>
-
                 <div className="how-block">
-                  <div className="how-block-title">📊 Hours per Project Type</div>
+                  <div className="how-block-title">Hours per Project Type</div>
                   <table className="how-table">
                     <thead><tr><th>Project Type</th><th>Hrs</th></tr></thead>
                     <tbody>
-                      {DEFAULT_PROJECT_TYPES.map(pt => (
-                        <tr key={pt.id}><td>{pt.label}</td><td>{pt.defaultHours}</td></tr>
+                      {projects.map(pt => (
+                        <tr key={pt.id}><td>{pt.label}</td><td>{pt.hours}</td></tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-
                 <div className="how-block">
-                  <div className="how-block-title">💡 Important Notes</div>
+                  <div className="how-block-title">Important Notes</div>
                   <ul className="how-list">
                     <li>Each project is owned by <strong>one team member</strong></li>
-                    <li>For deals in <strong>Decision stage</strong>, use <strong>85% of the Salesforce count</strong> — these deals have an 85% chance of closing</li>
-                    <li>Update deal counts <strong>monthly or biweekly</strong> for accurate tracking</li>
+                    <li>For <strong>Decision stage</strong> deals, use <strong>85% of the Salesforce count</strong></li>
+                    <li>Update deal counts <strong>biweekly</strong> for accurate tracking</li>
                     <li>Questions? Contact <strong>Abi or Kent</strong></li>
                   </ul>
                 </div>
-
               </div>
             </div>
           )}
@@ -334,80 +254,73 @@
       );
     }
 
-    // ─────────────────────────────────────────────
-    // DEAL INPUT TABLE
-    // ─────────────────────────────────────────────
+    // ── Deal Table (read-only) ─────────────────────
 
-    function DealInputTable({ dealCounts, setDealCounts, hoursPerProject, assumptions }) {
-      const handleChange = (id, q, val) =>
-        setDealCounts(prev => ({ ...prev, [id]: { ...prev[id], [q]: val === "" ? "" : Math.max(0, Number(val)) } }));
-
-      const quarterTotals = QUARTERS.map(q =>
-        calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours)
-      );
+    function DealTable({ projects, assumptions }) {
+      const quarterTotals = QUARTERS.map(q => calcQuarterHours(q, projects, assumptions.baselineHours));
 
       return (
         <div className="table-wrapper">
           <table className="main-table">
             <thead>
               <tr>
-                <th style={{textAlign:"left", width:250}}>Project Type</th>
-                <th className="center" style={{width:75}}>Hrs/Deal</th>
-                {QUARTERS.map(q => <th key={q} className="center">{q} Deals</th>)}
-                {QUARTERS.map(q => <th key={q+"_h"} className="center hrs-col">{q} Hrs</th>)}
+                <th className="left" style={{width:260}}>Project Type</th>
+                <th style={{width:75}}>Hrs/Deal</th>
+                {QUARTERS.map(q => <th key={q}>{q} Deals</th>)}
+                {QUARTERS.map(q => <th key={q+"_h"}>{q} Hrs</th>)}
+                <th className="total-col">Total Hrs</th>
               </tr>
             </thead>
             <tbody>
-              {DEFAULT_PROJECT_TYPES.map(pt => {
-                const hrs = hoursPerProject[pt.id] ?? pt.defaultHours;
+              {projects.map(pt => {
+                const rowTotal = QUARTERS.reduce((s, q) => s + (Number(pt.deals[q]) || 0) * pt.hours, 0);
                 return (
                   <tr key={pt.id}>
-                    <td className="label">{pt.label}</td>
-                    <td className="center muted">{hrs}</td>
+                    <td className="left">{pt.label}</td>
+                    <td className="muted">{pt.hours}</td>
                     {QUARTERS.map(q => (
-                      <td key={q} className="center">
-                        <input
-                          type="number" min="0"
-                          className="deal-input"
-                          value={dealCounts[pt.id]?.[q] ?? 0}
-                          onChange={e => handleChange(pt.id, q, e.target.value)}
-                        />
+                      <td key={q} style={{fontFamily:"'DM Mono', monospace"}}>
+                        {Number(pt.deals[q]) || 0}
                       </td>
                     ))}
-                    {QUARTERS.map(q => {
-                      const deals = Number(dealCounts[pt.id]?.[q]) || 0;
-                      return <td key={q+"_h"} className="center muted">{(deals * hrs).toLocaleString()}</td>;
-                    })}
+                    {QUARTERS.map(q => (
+                      <td key={q+"_h"} className="muted">
+                        {((Number(pt.deals[q]) || 0) * pt.hours).toLocaleString()}
+                      </td>
+                    ))}
+                    <td className="total-col">{rowTotal.toLocaleString()}</td>
                   </tr>
                 );
               })}
             </tbody>
             <tfoot>
               <tr className="baseline">
-                <td colSpan={2}>+ Baseline non-project hours</td>
+                <td className="left" colSpan={2}>+ Baseline non-project hours</td>
                 {QUARTERS.map(q => <td key={q}></td>)}
-                {QUARTERS.map(q => <td key={q+"_b"} className="center">{assumptions.baselineHours}</td>)}
+                {QUARTERS.map(q => <td key={q+"_b"}>{assumptions.baselineHours}</td>)}
+                <td></td>
               </tr>
               <tr className="totals">
-                <td colSpan={2} style={{fontWeight:700}}>Total Projected Hours</td>
+                <td className="left" colSpan={2} style={{color:"#e2e8f0"}}>Total Projected Hours</td>
                 {QUARTERS.map(q => <td key={q}></td>)}
                 {quarterTotals.map((total, i) => {
                   const status = getStatus(total / assumptions.capacityThreshold, assumptions.yellowThreshold);
-                  return <td key={i} className="center" style={{color: status.color, fontWeight:700, fontFamily:"'DM Mono', monospace"}}>{total.toLocaleString()}</td>;
+                  return <td key={i} style={{color: status.color}}>{total.toLocaleString()}</td>;
                 })}
+                <td style={{color:"#94a3b8"}}></td>
               </tr>
               <tr className="hire">
-                <td colSpan={2} style={{fontWeight:700, color:"#94a3b8"}}>Need to Hire?</td>
+                <td className="left" colSpan={2} style={{fontWeight:700, color:"#94a3b8"}}>Need to Hire?</td>
                 {QUARTERS.map(q => <td key={q}></td>)}
                 {quarterTotals.map((total, i) => {
                   const needed = total >= assumptions.capacityThreshold;
-                  const color  = needed ? "#ef4444" : "#22c55e";
                   return (
-                    <td key={i} className="center" style={{color, fontWeight:700, letterSpacing:".05em", fontSize:12}}>
-                      {needed ? "⚠ YES" : "NOT YET"}
+                    <td key={i} style={{color: needed ? "#ef4444" : "#22c55e", fontWeight:700, fontSize:12, letterSpacing:".05em"}}>
+                      {needed ? "YES" : "NOT YET"}
                     </td>
                   );
                 })}
+                <td></td>
               </tr>
             </tfoot>
           </table>
@@ -415,88 +328,39 @@
       );
     }
 
-    // ─────────────────────────────────────────────
-    // GOOGLE SHEETS CONFIG
-    // Update SHEET_TAB each week to match your current tab name.
-    // The tab must be on a sheet shared as "Anyone with the link can view".
-    // ─────────────────────────────────────────────
-
-    const SHEET_ID  = "16XQnVVZNh1Vak5PaCaAjbI6H55yTuEdxvvYNl3sKFpQ";
-    const SHEET_TAB = "Current"; // ← rename your latest tab to this each week
-
-    // Columns D=3, E=4, F=5, G=6 (0-indexed), rows 3–11 (0-indexed: 2–10)
-    const DATA_START_ROW = 2;  // row index 2 = row 3 in Sheets
-    const DATA_END_ROW   = 10; // row index 10 = row 11 in Sheets
-    const COL_Q1 = 3, COL_Q2 = 4, COL_Q3 = 5, COL_Q4 = 6; // D, E, F, G
-
-    async function fetchSheetData() {
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
-      const res  = await fetch(url);
-      const text = await res.text();
-      // Google wraps the JSON in /*O_o*/ google.visualization.Query.setResponse({...});
-      const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
-      const rows = json.table.rows;
-
-      const dealCounts = {};
-      DEFAULT_PROJECT_TYPES.forEach((pt, i) => {
-        const rowIdx = DATA_START_ROW + i;
-        const row    = rows[rowIdx];
-        const getVal = (col) => {
-          try { return Number(row.c[col]?.v) || 0; } catch { return 0; }
-        };
-        dealCounts[pt.id] = {
-          Q1: getVal(COL_Q1),
-          Q2: getVal(COL_Q2),
-          Q3: getVal(COL_Q3),
-          Q4: getVal(COL_Q4),
-        };
-      });
-      return dealCounts;
-    }
-
-    // ─────────────────────────────────────────────
-    // MAIN APP
-    // ─────────────────────────────────────────────
+    // ── Main App ───────────────────────────────────
 
     function App() {
-      const [dealCounts,  setDealCounts]  = useState(SAMPLE_DEAL_COUNTS);
-      const [loadStatus,  setLoadStatus]  = useState("loading"); // loading | loaded | error
+      const [projects,    setProjects]    = useState(FALLBACK_PROJECTS);
+      const [loadStatus,  setLoadStatus]  = useState("loading");
       const [lastUpdated, setLastUpdated] = useState(null);
+      const assumptions = DEFAULT_ASSUMPTIONS;
 
-      const hoursPerProject = Object.fromEntries(DEFAULT_PROJECT_TYPES.map(pt => [pt.id, pt.defaultHours]));
-      const assumptions     = DEFAULT_ASSUMPTIONS;
-
-      // Fetch from Google Sheets on load
       React.useEffect(() => {
         fetchSheetData()
           .then(data => {
-            setDealCounts(data);
+            setProjects(data);
             setLoadStatus("loaded");
             setLastUpdated(new Date().toLocaleTimeString());
           })
           .catch(() => setLoadStatus("error"));
       }, []);
 
-      // Export to Excel
       const handleExport = () => {
         const wb = XLSX.utils.book_new();
-        const dealRows = [
-          ["Project Type", "Hrs/Deal", ...QUARTERS.map(q => q + " Deals"), ...QUARTERS.map(q => q + " Hrs")],
-          ...DEFAULT_PROJECT_TYPES.map(pt => {
-            const hrs = hoursPerProject[pt.id];
-            return [
-              pt.label, hrs,
-              ...QUARTERS.map(q => Number(dealCounts[pt.id]?.[q]) || 0),
-              ...QUARTERS.map(q => (Number(dealCounts[pt.id]?.[q]) || 0) * hrs),
-            ];
+        const rows = [
+          ["Project Type", "Hrs/Deal", "Q1 Deals", "Q2 Deals", "Q3 Deals", "Q4 Deals", "Q1 Hrs", "Q2 Hrs", "Q3 Hrs", "Q4 Hrs", "Total Hrs"],
+          ...projects.map(pt => {
+            const rowTotal = QUARTERS.reduce((s,q) => s + (Number(pt.deals[q])||0)*pt.hours, 0);
+            return [pt.label, pt.hours, ...QUARTERS.map(q => Number(pt.deals[q])||0), ...QUARTERS.map(q => (Number(pt.deals[q])||0)*pt.hours), rowTotal];
           }),
-          ["Baseline non-project hours", "", ...QUARTERS.map(() => ""), ...QUARTERS.map(() => assumptions.baselineHours)],
-          ["TOTAL PROJECTED HOURS", "", ...QUARTERS.map(() => ""), ...QUARTERS.map(q => calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours))],
-          ["CAPACITY %", "", ...QUARTERS.map(() => ""), ...QUARTERS.map(q => ((calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours) / assumptions.capacityThreshold) * 100).toFixed(1) + "%")],
-          ["NEED TO HIRE?", "", ...QUARTERS.map(() => ""), ...QUARTERS.map(q => calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours) >= assumptions.capacityThreshold ? "YES" : "NOT YET")],
+          ["Baseline non-project hours", "", "", "", "", "", ...QUARTERS.map(()=>assumptions.baselineHours), ""],
+          ["TOTAL PROJECTED HOURS", "", "", "", "", "", ...QUARTERS.map(q=>calcQuarterHours(q,projects,assumptions.baselineHours)), ""],
+          ["CAPACITY %", "", "", "", "", "", ...QUARTERS.map(q=>((calcQuarterHours(q,projects,assumptions.baselineHours)/assumptions.capacityThreshold)*100).toFixed(1)+"%"), ""],
+          ["NEED TO HIRE?", "", "", "", "", "", ...QUARTERS.map(q=>calcQuarterHours(q,projects,assumptions.baselineHours)>=assumptions.capacityThreshold?"YES":"NOT YET"), ""],
         ];
-        const ws = XLSX.utils.aoa_to_sheet(dealRows);
-        ws["!cols"] = [{ wch: 36 }, { wch: 10 }, ...Array(8).fill({ wch: 12 })];
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        ws["!cols"] = [{ wch: 36 }, ...Array(10).fill({ wch: 12 })];
         XLSX.utils.book_append_sheet(wb, ws, "Capacity Plan");
         XLSX.writeFile(wb, "IMP_Capacity_Plan.xlsx");
       };
@@ -505,49 +369,43 @@
         <div>
           <header className="header">
             <div>
-              <div className="header-eyebrow">Implementation Team · Pelago Health</div>
+              <div className="header-eyebrow">Implementation Team - Pelago Health</div>
               <h1 className="header-title">Capacity Planner</h1>
             </div>
-            <button className="export-btn" onClick={handleExport}>↓ Export to Excel</button>
+            <button className="export-btn" onClick={handleExport}>Download Excel</button>
           </header>
 
           <main className="main">
 
-            {/* Live data status banner */}
-            {loadStatus === "loading" && (
-              <div className="status-banner loading">⏳ Loading latest data from Google Sheets…</div>
-            )}
-            {loadStatus === "loaded" && (
-              <div className="status-banner loaded">✓ Live data loaded from Google Sheets · Last refreshed {lastUpdated} · <a href={`https://docs.google.com/spreadsheets/d/${SHEET_ID}`} target="_blank" rel="noreferrer" style={{color:"#22c55e"}}>Open Sheet</a></div>
+            {loadStatus === "loading" && <div className="status-banner loading">Loading latest data from Google Sheets...</div>}
+            {loadStatus === "loaded"  && (
+              <div className="status-banner loaded">
+                Live data loaded from Google Sheets -- Last refreshed {lastUpdated} --&nbsp;
+                <a href={"https://docs.google.com/spreadsheets/d/" + SHEET_ID} target="_blank" rel="noreferrer" style={{color:"#15803d", fontWeight:600}}>Open Sheet</a>
+              </div>
             )}
             {loadStatus === "error" && (
-              <div className="status-banner error">⚠ Could not load Google Sheet — make sure the tab is named <strong>"Current"</strong> and the sheet is shared publicly. Showing sample data.</div>
+              <div className="status-banner error">Could not load Google Sheet -- make sure the tab is named "Current" and the sheet is shared publicly. Showing blank data.</div>
             )}
 
-            {/* How This Works toggle */}
-            <HowItWorks />
+            <HowItWorks projects={projects} />
 
-            {/* Summary cards */}
             <section>
               <h2 className="section-title">Quarterly Capacity Summary</h2>
-              <QuarterlySummary dealCounts={dealCounts} hoursPerProject={hoursPerProject} assumptions={assumptions} />
+              <QuarterlySummary projects={projects} assumptions={assumptions} />
             </section>
 
-            {/* Deal table — read-only when live data loaded */}
             <section>
               <h2 className="section-title">Projected Deal Counts by Quarter</h2>
               <p className="section-subtitle">
-                Data pulled live from Google Sheets. Update the <strong>"Current"</strong> tab in your sheet and refresh this page to see changes.
-                For deals in <strong>Decision</strong> stage, apply 85% of the Salesforce pipeline count.
+                Data pulled live from Google Sheets "Current" tab. Refresh this page after updating the sheet to see the latest numbers.
+                For Decision stage deals, use 85% of the Salesforce pipeline count.
               </p>
-              <DealInputTable
-                dealCounts={dealCounts} setDealCounts={setDealCounts}
-                hoursPerProject={hoursPerProject} assumptions={assumptions}
-              />
+              <DealTable projects={projects} assumptions={assumptions} />
             </section>
 
             <footer className="page-footer">
-              Implementation Team Capacity Planner · Pelago Health · Questions? Contact Abi or Kent
+              Implementation Team Capacity Planner - Pelago Health - Questions? Contact Abi or Kent
             </footer>
           </main>
         </div>
