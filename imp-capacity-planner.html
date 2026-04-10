@@ -56,6 +56,12 @@
 
 
 
+    /* ── Status banner ── */
+    .status-banner { padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+    .status-banner.loading { background: #f1f5f9; color: #64748b; }
+    .status-banner.loaded  { background: #dcfce7; color: #15803d; }
+    .status-banner.error   { background: #fee2e2; color: #dc2626; }
+
     /* ── Summary cards ── */
     .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     @media (max-width: 900px) { .summary-grid { grid-template-columns: repeat(2,1fr); } }
@@ -410,20 +416,70 @@
     }
 
     // ─────────────────────────────────────────────
+    // GOOGLE SHEETS CONFIG
+    // Update SHEET_TAB each week to match your current tab name.
+    // The tab must be on a sheet shared as "Anyone with the link can view".
+    // ─────────────────────────────────────────────
+
+    const SHEET_ID  = "16XQnVVZNh1Vak5PaCaAjbI6H55yTuEdxvvYNl3sKFpQ";
+    const SHEET_TAB = "Current"; // ← rename your latest tab to this each week
+
+    // Columns D=3, E=4, F=5, G=6 (0-indexed), rows 3–11 (0-indexed: 2–10)
+    const DATA_START_ROW = 2;  // row index 2 = row 3 in Sheets
+    const DATA_END_ROW   = 10; // row index 10 = row 11 in Sheets
+    const COL_Q1 = 3, COL_Q2 = 4, COL_Q3 = 5, COL_Q4 = 6; // D, E, F, G
+
+    async function fetchSheetData() {
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB)}`;
+      const res  = await fetch(url);
+      const text = await res.text();
+      // Google wraps the JSON in /*O_o*/ google.visualization.Query.setResponse({...});
+      const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+      const rows = json.table.rows;
+
+      const dealCounts = {};
+      DEFAULT_PROJECT_TYPES.forEach((pt, i) => {
+        const rowIdx = DATA_START_ROW + i;
+        const row    = rows[rowIdx];
+        const getVal = (col) => {
+          try { return Number(row.c[col]?.v) || 0; } catch { return 0; }
+        };
+        dealCounts[pt.id] = {
+          Q1: getVal(COL_Q1),
+          Q2: getVal(COL_Q2),
+          Q3: getVal(COL_Q3),
+          Q4: getVal(COL_Q4),
+        };
+      });
+      return dealCounts;
+    }
+
+    // ─────────────────────────────────────────────
     // MAIN APP
     // ─────────────────────────────────────────────
 
     function App() {
-      const [dealCounts, setDealCounts] = useState(SAMPLE_DEAL_COUNTS);
+      const [dealCounts,  setDealCounts]  = useState(SAMPLE_DEAL_COUNTS);
+      const [loadStatus,  setLoadStatus]  = useState("loading"); // loading | loaded | error
+      const [lastUpdated, setLastUpdated] = useState(null);
 
       const hoursPerProject = Object.fromEntries(DEFAULT_PROJECT_TYPES.map(pt => [pt.id, pt.defaultHours]));
       const assumptions     = DEFAULT_ASSUMPTIONS;
 
-      // Export current deal counts + calculated totals to Excel
+      // Fetch from Google Sheets on load
+      React.useEffect(() => {
+        fetchSheetData()
+          .then(data => {
+            setDealCounts(data);
+            setLoadStatus("loaded");
+            setLastUpdated(new Date().toLocaleTimeString());
+          })
+          .catch(() => setLoadStatus("error"));
+      }, []);
+
+      // Export to Excel
       const handleExport = () => {
         const wb = XLSX.utils.book_new();
-
-        // Sheet 1: Deal Counts
         const dealRows = [
           ["Project Type", "Hrs/Deal", ...QUARTERS.map(q => q + " Deals"), ...QUARTERS.map(q => q + " Hrs")],
           ...DEFAULT_PROJECT_TYPES.map(pt => {
@@ -435,28 +491,13 @@
             ];
           }),
           ["Baseline non-project hours", "", ...QUARTERS.map(() => ""), ...QUARTERS.map(() => assumptions.baselineHours)],
-          ["TOTAL PROJECTED HOURS", "",  ...QUARTERS.map(() => ""), ...QUARTERS.map(q => calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours))],
-          ["CAPACITY %", "",             ...QUARTERS.map(() => ""), ...QUARTERS.map(q => ((calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours) / assumptions.capacityThreshold) * 100).toFixed(1) + "%")],
-          ["NEED TO HIRE?", "",          ...QUARTERS.map(() => ""), ...QUARTERS.map(q => calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours) >= assumptions.capacityThreshold ? "YES" : "NOT YET")],
+          ["TOTAL PROJECTED HOURS", "", ...QUARTERS.map(() => ""), ...QUARTERS.map(q => calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours))],
+          ["CAPACITY %", "", ...QUARTERS.map(() => ""), ...QUARTERS.map(q => ((calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours) / assumptions.capacityThreshold) * 100).toFixed(1) + "%")],
+          ["NEED TO HIRE?", "", ...QUARTERS.map(() => ""), ...QUARTERS.map(q => calcQuarterHours(q, dealCounts, hoursPerProject, assumptions.baselineHours) >= assumptions.capacityThreshold ? "YES" : "NOT YET")],
         ];
         const ws = XLSX.utils.aoa_to_sheet(dealRows);
         ws["!cols"] = [{ wch: 36 }, { wch: 10 }, ...Array(8).fill({ wch: 12 })];
         XLSX.utils.book_append_sheet(wb, ws, "Capacity Plan");
-
-        // Sheet 2: Assumptions
-        const assumptionRows = [
-          ["Assumption", "Value"],
-          ["Quarterly Baseline Non-Project Hours", assumptions.baselineHours],
-          ["Quarterly Capacity Threshold (hrs)", assumptions.capacityThreshold],
-          ["Yellow Alert Threshold", (assumptions.yellowThreshold * 100) + "%"],
-          ["", ""],
-          ["Project Type", "Hours/Deal"],
-          ...DEFAULT_PROJECT_TYPES.map(pt => [pt.label, hoursPerProject[pt.id]]),
-        ];
-        const ws2 = XLSX.utils.aoa_to_sheet(assumptionRows);
-        ws2["!cols"] = [{ wch: 40 }, { wch: 16 }];
-        XLSX.utils.book_append_sheet(wb, ws2, "Assumptions");
-
         XLSX.writeFile(wb, "IMP_Capacity_Plan.xlsx");
       };
 
@@ -472,20 +513,31 @@
 
           <main className="main">
 
+            {/* Live data status banner */}
+            {loadStatus === "loading" && (
+              <div className="status-banner loading">⏳ Loading latest data from Google Sheets…</div>
+            )}
+            {loadStatus === "loaded" && (
+              <div className="status-banner loaded">✓ Live data loaded from Google Sheets · Last refreshed {lastUpdated} · <a href={`https://docs.google.com/spreadsheets/d/${SHEET_ID}`} target="_blank" rel="noreferrer" style={{color:"#22c55e"}}>Open Sheet</a></div>
+            )}
+            {loadStatus === "error" && (
+              <div className="status-banner error">⚠ Could not load Google Sheet — make sure the tab is named <strong>"Current"</strong> and the sheet is shared publicly. Showing sample data.</div>
+            )}
+
             {/* How This Works toggle */}
             <HowItWorks />
 
-            {/* Summary cards — update live as deal counts change */}
+            {/* Summary cards */}
             <section>
               <h2 className="section-title">Quarterly Capacity Summary</h2>
               <QuarterlySummary dealCounts={dealCounts} hoursPerProject={hoursPerProject} assumptions={assumptions} />
             </section>
 
-            {/* Deal input table */}
+            {/* Deal table — read-only when live data loaded */}
             <section>
               <h2 className="section-title">Projected Deal Counts by Quarter</h2>
               <p className="section-subtitle">
-                Enter expected deals closing each quarter — hours and capacity calculate automatically.
+                Data pulled live from Google Sheets. Update the <strong>"Current"</strong> tab in your sheet and refresh this page to see changes.
                 For deals in <strong>Decision</strong> stage, apply 85% of the Salesforce pipeline count.
               </p>
               <DealInputTable
